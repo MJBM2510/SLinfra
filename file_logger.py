@@ -31,3 +31,12 @@ class FileLogger:
     
     def _timestamp():
         return datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    
+    def _write(self, level, message):
+        
+        if self.LEVELS[level] < self.level:
+            return
+        
+        line = f'[{self._timestamp()}] [{level}] | {message}'
+        self.file.write(line + '\n')
+        self.file.flush()
