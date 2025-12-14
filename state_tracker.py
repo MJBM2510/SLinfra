@@ -62,3 +62,10 @@ class StateTracker:
     
     def exists(self, item_id):
         return item_id in self.state
+    
+    def clear(self):
+        self.state = {}
+        self.save()
+    
+    def all(self):
+        return self.state
