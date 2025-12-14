@@ -8,7 +8,7 @@ class StateTracker:
         
         self.state_file = state_file
         self.state = {}
-        self._load
+        self._load()
     
     def _load(self):
         
@@ -21,14 +21,14 @@ class StateTracker:
         else:
             self.state = {}
     
-    def _timestamp():
+    def _timestamp(self):
         return datetime.now().strftime('%Y-%m-%d %H:%M:%S')
     
     def save(self):
-        tmp_file = self.state + '.tmp'
+        tmp_file = self.state_file + '.tmp'
         
         with open(tmp_file, 'w', encoding = 'utf-8') as file:
-            json.dump(self.state, file, ensure_ascii = ascii, indent = 4)
+            json.dump(self.state, file, ensure_ascii = False, indent = 4)
         
         os.replace(tmp_file, self.state_file)
     
@@ -46,3 +46,19 @@ class StateTracker:
     
     def get(self, item_id, default = None):
         return self.state.get(item_id, default)
+    
+    def filter_by_status(self, status):
+
+        return { 
+            key: value for key, value in self.state.items() 
+            if value.get('status') == status
+        }
+    
+    def remove(self, item_id):
+        
+        if item_id in self.state:
+            del self.state[item_id]
+            self.save()
+    
+    def exists(self, item_id):
+        return item_id in self.state
