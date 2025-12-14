@@ -18,10 +18,10 @@ class FileLogger:
         self.log_dir = log_dir
         self.log_path = os.path.join(log_dir, log_file)
         
-        self._prepare_evnironment()
+        self._prepare_environment()
         self.file = open(self.log_path, 'a', encoding = 'utf-8')
     
-    def _prepare_evnironment(self):
+    def _prepare_environment(self):
         
         os.makedirs(self.log_dir, exist_ok = True)
         
@@ -29,7 +29,7 @@ class FileLogger:
             with open(self.log_path, 'w', encoding = 'utf-8') as file:
                 file.write(f"=== Log started at {self._timestamp()} ===\n")
     
-    def _timestamp():
+    def _timestamp(self):
         return datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     
     def _write(self, level, message):
