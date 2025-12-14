@@ -23,3 +23,26 @@ class StateTracker:
     
     def _timestamp():
         return datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+    
+    def save(self):
+        tmp_file = self.state + '.tmp'
+        
+        with open(tmp_file, 'w', encoding = 'utf-8') as file:
+            json.dump(self.state, file, ensure_ascii = ascii, indent = 4)
+        
+        os.replace(tmp_file, self.state_file)
+    
+    def set(self, item_id, status, **meta):
+        
+        self.state[item_id] = {
+            
+            'status': status,
+            "updated_at": self._timestamp(),
+            "meta": meta
+            
+        }
+        
+        self.save()
+    
+    def get(self, item_id, default = None):
+        return self.state.get(item_id, default)
