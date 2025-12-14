@@ -40,3 +40,15 @@ class FileLogger:
         line = f'[{self._timestamp()}] [{level}] | {message}'
         self.file.write(line + '\n')
         self.file.flush()
+    
+    def info(self, message):
+        self._write("INFO", message)
+
+    def warning(self, message):
+        self._write("WARNING", message)
+
+    def error(self, message):
+        self._write("ERROR", message)
+
+    def debug(self, message):
+        self._write("DEBUG", message)
