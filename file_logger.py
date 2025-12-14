@@ -62,3 +62,12 @@ class FileLogger:
     def close(self):
         if not self.file.closed:
             self.file.close()
+
+
+# test
+if __name__ == "__main__":
+    with FileLogger(level="DEBUG") as logger:
+        logger.debug("Debug message")
+        logger.info("Info message")
+        logger.warning("Warning message")
+        logger.error("Error message")
