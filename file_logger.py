@@ -52,3 +52,13 @@ class FileLogger:
 
     def debug(self, message):
         self._write("DEBUG", message)
+    
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        self.close()
+
+    def close(self):
+        if not self.file.closed:
+            self.file.close()
