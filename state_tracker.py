@@ -13,14 +13,12 @@ class Status(Enum):
 class StateTracker:
     
     def __init__(self, state_file = 'state.json'):
-        
         self._lock = threading.RLock()
         self.state_file = state_file
         self.state = {}
         self._load()
     
     def _load(self):
-        
         with self._lock:
             if os.path.exists(self.state_file):
                 try:
@@ -44,7 +42,6 @@ class StateTracker:
             os.replace(tmp_file, self.state_file)
     
     def set(self, item_id, status, **meta):
-        
         with self._lock:
             self.state[item_id] = {
                 
@@ -61,7 +58,6 @@ class StateTracker:
             return self.state.get(item_id, default)
     
     def filter_by_status(self, status):
-
         with self._lock:
             return { 
                 key: value for key, value in self.state.items() 
@@ -69,7 +65,6 @@ class StateTracker:
             }
     
     def remove(self, item_id):
-        
         with self._lock:
             if item_id in self.state:
                 del self.state[item_id]

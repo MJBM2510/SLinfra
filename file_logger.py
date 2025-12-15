@@ -13,7 +13,6 @@ class FileLogger:
     }
     
     def __init__(self, log_dir = 'logs', log_file = 'app.log', level = 'INFO'):
-        
         self.level = self.LEVELS.get(level, 20)
         self.log_dir = log_dir
         self.log_path = os.path.join(log_dir, log_file)
@@ -22,7 +21,6 @@ class FileLogger:
         self.file = open(self.log_path, 'a', encoding = 'utf-8')
     
     def _prepare_environment(self):
-        
         os.makedirs(self.log_dir, exist_ok = True)
         
         if not os.path.exists(self.log_path):
@@ -33,7 +31,6 @@ class FileLogger:
         return datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     
     def _write(self, level, message):
-        
         if self.LEVELS[level] < self.level:
             return
         
