@@ -1,6 +1,7 @@
 import os
 from datetime import datetime
 
+
 class FileLogger:
 
     LEVELS = {"DEBUG": 10, "INFO": 20, "WARNING": 30, "ERROR": 40}
