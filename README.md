@@ -10,6 +10,8 @@ A lightweight Python utility for file-based logging and persistent state trackin
 - Avoid heavy logging frameworks
 - It is especially useful for scripts, automation tools, and long-running processes.
 
+---
+
 ## Features
 
 - Simple file-based logger
@@ -17,11 +19,15 @@ A lightweight Python utility for file-based logging and persistent state trackin
 - Zero external dependencies
 - Easy to integrate into existing projects
 
+---
+
 ## Installation
 
 ```bash
 pip install infra
 ```
+
+---
 
 ## Quick Start
 
@@ -51,6 +57,8 @@ state.save()
 
 This allows your application to persist important values between executions.
 
+---
+
 ## Project Structure
 
 ```
@@ -64,6 +72,8 @@ infra/
 └── pyproject.toml
 ```
 
+---
+
 ## Design Goals
 
 - Keep the API small and intuitive
@@ -71,11 +81,15 @@ infra/
 - Avoid external dependencies
 - Be suitable for educational and practical use
 
+---
+
 ## Limitations
 
 - Not thread-safe
 - No log rotation support
 - Designed for small to medium workloads
+
+---
 
 ## Roadmap / TODO
 
