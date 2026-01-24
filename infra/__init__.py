@@ -1,4 +1,4 @@
-__version__ = "0.1.1"
+__version__ = "0.1.2"
 AUTHOR = "MJBM2510"
 
 from infra.state_tracker import StateTracker, Status
