@@ -1,10 +1,10 @@
-# infra
+# SLinfra
 
 A lightweight Python utility for file-based logging and persistent state tracking.
 
 ## Overview
 
-- infra is a minimal Python package designed to help small to medium projects:
+- SLinfra is a minimal Python package designed to help small to medium projects:
 - Keep clean and readable logs
 - Persist application state between runs
 - Avoid heavy logging frameworks
@@ -24,7 +24,7 @@ A lightweight Python utility for file-based logging and persistent state trackin
 ## Installation
 
 ```bash
-pip install infra
+pip install SLinfra
 ```
 
 ---
@@ -33,7 +33,7 @@ pip install infra
 
 ### File Logging
 ```python
-from infra.file_logger import FileLogger
+from SLinfra.file_logger import FileLogger
 
 logger = FileLogger("app.log")
 
@@ -46,7 +46,7 @@ This will create (or append to) a log file and store timestamped log messages.
 
 ### State Tracking
 ```python
-from infra.state_tracker import StateTracker
+from SLinfra.state_tracker import StateTracker
 
 state = StateTracker("state.json")
 
@@ -62,8 +62,8 @@ This allows your application to persist important values between executions.
 ## Project Structure
 
 ```
-infra/
-├── infra/
+SLinfra/
+├── SLinfra/
 │   ├── __init__.py
 │   ├── file_logger.py
 │   └── state_tracker.py
