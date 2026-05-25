@@ -83,3 +83,9 @@ class StateTracker:
     def all(self):
         with self._lock:
             return dict(self.state)
+
+    def edit(self, item_id, new_status, **new_meta):
+        with self._lock:
+            self.state[item_id]["status"] = new_status
+            self.state[item_id]["meta"] = new_meta
+            self.save()
