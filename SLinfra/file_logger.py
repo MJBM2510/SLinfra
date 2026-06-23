@@ -50,6 +50,23 @@ class FileLogger:
             return os.path.getsize(self.log_path) >= self.max_bytes
         except OSError:
             return False
+    
+    def _rotate(self):
+        self.file.close()
+ 
+        for i in range(self.backup_count - 1, 0, -1):
+            src = f"{self.log_path}.{i}"
+            dst = f"{self.log_path}.{i + 1}"
+            if os.path.exists(src):
+                os.replace(src, dst)
+ 
+        if self.backup_count > 0 and os.path.exists(self.log_path):
+            os.replace(self.log_path, f"{self.log_path}.1")
+ 
+        with open(self.log_path, "w", encoding="utf-8") as file:
+            file.write(f"=== Log started at {self._timestamp()} ===\n")
+ 
+        self.file = open(self.log_path, "a", encoding="utf-8")
 
     def _write(self, level, message):
         if self.LEVELS[level] < self.level:
