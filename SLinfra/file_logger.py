@@ -1,18 +1,37 @@
 import os
 from datetime import datetime
+import threading
 
 
 class FileLogger:
 
     LEVELS = {"DEBUG": 10, "INFO": 20, "WARNING": 30, "ERROR": 40}
 
-    def __init__(self, log_dir="logs", log_file="app.log", level="INFO"):
-        self.level = self.LEVELS.get(level, 20)
-        self.log_dir = log_dir
-        self.log_path = os.path.join(log_dir, log_file)
-
-        self._prepare_environment()
-        self.file = open(self.log_path, "a", encoding="utf-8")
+    def __init__(
+            self,
+            log_dir="logs",
+            log_file="app.log",
+            level="INFO",
+            max_bytes=5 * 1024 * 1024,
+            backup_count=3,
+        ):
+            if level not in self.LEVELS:
+                raise ValueError(
+                    f"Invalid level '{level}'. Must be one of {list(self.LEVELS)}"
+                )
+    
+            self.level = self.LEVELS[level]
+            self.log_dir = log_dir
+            self.log_file = log_file
+            self.log_path = os.path.join(log_dir, log_file)
+            self.max_bytes = max_bytes
+            self.backup_count = backup_count
+    
+            self._lock = threading.RLock()
+            self._closed = False
+    
+            self._prepare_environment()
+            self.file = open(self.log_path, "a", encoding="utf-8")
 
     def _prepare_environment(self):
         os.makedirs(self.log_dir, exist_ok=True)
