@@ -43,6 +43,14 @@ class FileLogger:
     def _timestamp(self):
         return datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
+    def _should_rotate(self):
+        if self.max_bytes <= 0:
+            return False
+        try:
+            return os.path.getsize(self.log_path) >= self.max_bytes
+        except OSError:
+            return False
+
     def _write(self, level, message):
         if self.LEVELS[level] < self.level:
             return
