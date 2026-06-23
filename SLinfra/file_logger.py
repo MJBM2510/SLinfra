@@ -8,30 +8,30 @@ class FileLogger:
     LEVELS = {"DEBUG": 10, "INFO": 20, "WARNING": 30, "ERROR": 40}
 
     def __init__(
-            self,
-            log_dir="logs",
-            log_file="app.log",
-            level="INFO",
-            max_bytes=5 * 1024 * 1024,
-            backup_count=3,
-        ):
-            if level not in self.LEVELS:
-                raise ValueError(
-                    f"Invalid level '{level}'. Must be one of {list(self.LEVELS)}"
-                )
-    
-            self.level = self.LEVELS[level]
-            self.log_dir = log_dir
-            self.log_file = log_file
-            self.log_path = os.path.join(log_dir, log_file)
-            self.max_bytes = max_bytes
-            self.backup_count = backup_count
-    
-            self._lock = threading.RLock()
-            self._closed = False
-    
-            self._prepare_environment()
-            self.file = open(self.log_path, "a", encoding="utf-8")
+        self,
+        log_dir="logs",
+        log_file="app.log",
+        level="INFO",
+        max_bytes=5 * 1024 * 1024,
+        backup_count=3,
+    ):
+        if level not in self.LEVELS:
+            raise ValueError(
+                f"Invalid level '{level}'. Must be one of {list(self.LEVELS)}"
+            )
+            
+        self.level = self.LEVELS[level]
+        self.log_dir = log_dir
+        self.log_file = log_file
+        self.log_path = os.path.join(log_dir, log_file)
+        self.max_bytes = max_bytes
+        self.backup_count = backup_count
+        
+        self._lock = threading.RLock()
+        self._closed = False
+        
+        self._prepare_environment()
+        self.file = open(self.log_path, "a", encoding="utf-8")
 
     def _prepare_environment(self):
         os.makedirs(self.log_dir, exist_ok=True)
@@ -53,25 +53,36 @@ class FileLogger:
     
     def _rotate(self):
         self.file.close()
- 
+        
         for i in range(self.backup_count - 1, 0, -1):
             src = f"{self.log_path}.{i}"
             dst = f"{self.log_path}.{i + 1}"
             if os.path.exists(src):
                 os.replace(src, dst)
- 
+                
         if self.backup_count > 0 and os.path.exists(self.log_path):
             os.replace(self.log_path, f"{self.log_path}.1")
- 
+            
         with open(self.log_path, "w", encoding="utf-8") as file:
             file.write(f"=== Log started at {self._timestamp()} ===\n")
- 
+            
         self.file = open(self.log_path, "a", encoding="utf-8")
 
     def _write(self, level, message):
-        if self.LEVELS[level] < self.level:
-            return
-
+        with self._lock:
+            if self._closed:
+                raise ValueError("I/O operation on closed FileLogger")
+            
+            if self.LEVELS[level] < self.level:
+                return
+            
+            if self._should_rotate():
+                self._rotate()
+                
+            line = f"[{self._timestamp()}] [{level}] | {message}"
+            self.file.write(line + "\n")
+            self.file.flush()
+            
         line = f"[{self._timestamp()}] [{level}] | {message}"
         self.file.write(line + "\n")
         self.file.flush()
@@ -95,9 +106,16 @@ class FileLogger:
         self.close()
 
     def close(self):
-        if not self.file.closed:
-            self.file.close()
+        with self._lock:
+            if not self._closed and not self.file.closed:
+                self.file.close()
+            self._closed = True
 
+    def __del__(self):
+        try:
+            self.close()
+        except Exception:
+            pass
 
 # test
 if __name__ == "__main__":
