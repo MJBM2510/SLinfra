@@ -106,8 +106,11 @@ class FileLogger:
         self.close()
 
     def close(self):
-        if not self.file.closed:
-            self.file.close()
+        with self._lock:
+            if not self._closed and not self.file.closed:
+                self.file.close()
+            self._closed = True
+
 
 
 # test
