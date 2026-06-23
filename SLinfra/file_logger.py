@@ -69,9 +69,20 @@ class FileLogger:
         self.file = open(self.log_path, "a", encoding="utf-8")
 
     def _write(self, level, message):
-        if self.LEVELS[level] < self.level:
-            return
-
+        with self._lock:
+            if self._closed:
+                raise ValueError("I/O operation on closed FileLogger")
+            
+            if self.LEVELS[level] < self.level:
+                return
+            
+            if self._should_rotate():
+                self._rotate()
+                
+            line = f"[{self._timestamp()}] [{level}] | {message}"
+            self.file.write(line + "\n")
+            self.file.flush()
+            
         line = f"[{self._timestamp()}] [{level}] | {message}"
         self.file.write(line + "\n")
         self.file.flush()
