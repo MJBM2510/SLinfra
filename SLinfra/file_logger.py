@@ -111,7 +111,11 @@ class FileLogger:
                 self.file.close()
             self._closed = True
 
-
+    def __del__(self):
+        try:
+            self.close()
+        except Exception:
+            pass
 
 # test
 if __name__ == "__main__":
