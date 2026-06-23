@@ -1,3 +1,4 @@
-infra.egg-info
-/dist
 SLinfra.egg-info
+/dist
+SLinfra/__pycache__
+.vscode
