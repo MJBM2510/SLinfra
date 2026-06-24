@@ -4,7 +4,6 @@ from datetime import datetime
 import threading
 from enum import Enum
 import sys
-import threading
 from contextlib import contextmanager
 
 if sys.platform == "win32":
