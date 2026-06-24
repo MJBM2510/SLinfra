@@ -71,6 +71,18 @@ class StateTracker:
     def _timestamp(self):
         return datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
+    def _reload_locked(self):
+        #Re-read state from disk. Caller must hold both locks.
+        if os.path.exists(self.state_file):
+            try:
+                with open(self.state_file, "r", encoding="utf-8") as file:
+                    self.state = json.load(file)
+            except (json.JSONDecodeError, OSError, UnicodeDecodeError):
+                # Another writer may be mid-write under normal conditions
+                # this shouldn't happen because we hold the process lock,
+                # so keep current in-memory state rather than guessing.
+                pass
+
     def save(self):
         tmp_file = self.state_file + ".tmp"
 
