@@ -3,7 +3,14 @@ import json
 from datetime import datetime
 import threading
 from enum import Enum
+import sys
+import threading
+from contextlib import contextmanager
 
+if sys.platform == "win32":
+    import msvcrt
+else:
+    import fcntl
 
 class Status(Enum):
     PENDING = "pending"
@@ -14,9 +21,11 @@ class Status(Enum):
 
 class StateTracker:
 
-    def __init__(self, state_file="state.json"):
+    def __init__(self, state_file="state.json", use_file_lock=True):
         self._lock = threading.RLock()
         self.state_file = state_file
+        self.lock_file = state_file + ".lock"
+        self.use_file_lock = use_file_lock
         self.state = {}
         self._load()
 
