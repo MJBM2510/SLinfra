@@ -58,8 +58,13 @@ class StateTracker:
                 try:
                     with open(self.state_file, "r", encoding="utf-8") as file:
                         self.state = json.load(file)
-                except Exception:
-                    self.state = {}
+                except (json.JSONDecodeError, OSError, UnicodeDecodeError) as exc:
+                    raise ValueError(
+                        f"Could not read state file '{self.state_file}': {exc}. "
+                        "The file may be corrupted. Inspect or remove it manually "
+                        "before continuing -- it was NOT auto-cleared, to avoid "
+                        "silent data loss."
+                    ) from exc
             else:
                 self.state = {}
 
