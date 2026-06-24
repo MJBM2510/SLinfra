@@ -95,14 +95,14 @@ class StateTracker:
             self._save_locked()
 
     def set(self, item_id, status, **meta):
-        with self._lock:
+        with self._lock, self._process_lock():
+            self._reload_locked()
             self.state[item_id] = {
                 "status": status,
                 "updated_at": self._timestamp(),
                 "meta": meta,
             }
-
-            self.save()
+            self._save_locked()
 
     def get(self, item_id, default=None):
         with self._lock:
@@ -117,26 +117,33 @@ class StateTracker:
             }
 
     def remove(self, item_id):
-        with self._lock:
+        with self._lock, self._process_lock():
+            self._reload_locked()
             if item_id in self.state:
                 del self.state[item_id]
-                self.save()
+                self._save_locked()
 
     def exists(self, item_id):
         with self._lock:
             return item_id in self.state
 
     def clear(self):
-        with self._lock:
+        with self._lock, self._process_lock():
             self.state = {}
-            self.save()
+            self._save_locked()
 
     def all(self):
         with self._lock:
             return dict(self.state)
 
     def edit(self, item_id, new_status, **new_meta):
-        with self._lock:
+        with self._lock, self._process_lock():
+            self._reload_locked()
+            if item_id not in self.state:
+                raise KeyError(
+                    f"Cannot edit '{item_id}': it has not been set() yet."
+                )
             self.state[item_id]["status"] = new_status
             self.state[item_id]["meta"] = new_meta
-            self.save()
+            self.state[item_id]["updated_at"] = self._timestamp()
+            self._save_locked()
