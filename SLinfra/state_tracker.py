@@ -83,6 +83,13 @@ class StateTracker:
                 # so keep current in-memory state rather than guessing.
                 pass
 
+    def _save_locked(self):
+        # Write state to disk. Caller must hold both locks.
+        tmp_file = self.state_file + ".tmp"
+        with open(tmp_file, "w", encoding="utf-8") as file:
+            json.dump(self.state, file, ensure_ascii=False, indent=4)
+        os.replace(tmp_file, self.state_file)
+
     def save(self):
         tmp_file = self.state_file + ".tmp"
 
