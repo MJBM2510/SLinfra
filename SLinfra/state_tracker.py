@@ -91,13 +91,8 @@ class StateTracker:
         os.replace(tmp_file, self.state_file)
 
     def save(self):
-        tmp_file = self.state_file + ".tmp"
-
-        with self._lock:
-            with open(tmp_file, "w", encoding="utf-8") as file:
-                json.dump(self.state, file, ensure_ascii=False, indent=4)
-
-            os.replace(tmp_file, self.state_file)
+        with self._lock, self._process_lock():
+            self._save_locked()
 
     def set(self, item_id, status, **meta):
         with self._lock:
