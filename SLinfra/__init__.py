@@ -1,4 +1,4 @@
-__version__ = "0.3.0"
+__version__ = "1.0.0"
 AUTHOR = "MJBM2510"
 
 from SLinfra.state_tracker import StateTracker, Status
