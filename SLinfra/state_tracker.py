@@ -29,6 +29,29 @@ class StateTracker:
         self.state = {}
         self._load()
 
+    @contextmanager
+    def _process_lock(self):
+        if not self.use_file_lock:
+            yield
+            return
+        
+        lock_fd = open(self.lock_file, "a+")
+        try:
+            if sys.platform == "win32":
+                msvcrt.locking(lock_fd.fileno(), msvcrt.LK_LOCK, 1)
+            else:
+                fcntl.flock(lock_fd.fileno(), fcntl.LOCK_EX)
+            yield
+        finally:
+            try:
+                if sys.platform == "win32":
+                    lock_fd.seek(0)
+                    msvcrt.locking(lock_fd.fileno(), msvcrt.LK_UNLCK, 1)
+                else:
+                    fcntl.flock(lock_fd.fileno(), fcntl.LOCK_UN)
+            finally:
+                lock_fd.close()
+
     def _load(self):
         with self._lock:
             if os.path.exists(self.state_file):
